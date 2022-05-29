@@ -1,2 +1,2 @@
-# nodered-shellrecharge
-A subflow for Nodered to control Shell Recharge car charing equipment.
+# Node-RED-shellrecharge
+A subflow for Node-RED to control Shell Recharge car charing equipment.
