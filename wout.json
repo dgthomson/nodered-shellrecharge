@@ -3339,17 +3339,10 @@
         "rules": [
             {
                 "t": "set",
-                "p": "payload.text",
+                "p": "payload",
                 "pt": "msg",
-                "to": "Error: check debug output",
-                "tot": "str"
-            },
-            {
-                "t": "set",
-                "p": "payload.fill",
-                "pt": "msg",
-                "to": "red",
-                "tot": "str"
+                "to": "{\"text\":\"Error: check debug output\",\"fill\":\"red\"}",
+                "tot": "json"
             }
         ],
         "action": "",
@@ -5410,7 +5403,6 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "credentials": {},
         "x": 890,
         "y": 900,
         "wires": [
@@ -7064,7 +7056,7 @@
         "type": "function",
         "z": "9d5f683315a5a542",
         "name": "",
-        "func": "// Shell Recharge's error message JSON is farked\n// But the HTTP node sometimes reports a simple string\n\nfunction hasJsonStructure(str) {\n    if (typeof str !== 'string') return false;\n    try {\n        const result = JSON.parse(str);\n        const type = Object.prototype.toString.call(result);\n        return type === '[object Object]' \n            || type === '[object Array]';\n    } catch (err) {\n        return false;\n    }\n}\nif (msg.payload.includes(\"{\"))\n{\n    // it's JSON\n    msg.error = msg.payload.substring(msg.payload.indexOf('{'),msg.payload.lastIndexOf('}')+1);\n}\n    else\n{\n    // it's plaintext\n    msg.error = '{\"' + msg.payload + '\"}';\n}\n// Original code...\n// msg.error = msg.payload.substring(msg.payload.indexOf('{'),msg.payload.lastIndexOf('}')+1);\nreturn msg;",
+        "func": "// Shell Recharge's error message JSON is farked\n// But the HTTP node sometimes reports a simple string\n\nfunction hasJsonStructure(str) {\n    if (typeof str !== 'string') return false;\n    try {\n        const result = JSON.parse(str);\n        const type = Object.prototype.toString.call(result);\n        return type === '[object Object]' \n            || type === '[object Array]';\n    } catch (err) {\n        return false;\n    }\n}\nif (msg.payload.includes(\"{\"))\n{\n    // it's JSON\n    msg.error = msg.payload.substring(msg.payload.indexOf('{'),msg.payload.lastIndexOf('}')+1);\n}\n    else\n{\n    // it's plaintext\n    msg.error = '{\"message\":\"' + msg.payload + '\"}';\n}\n// Original code...\n// msg.error = msg.payload.substring(msg.payload.indexOf('{'),msg.payload.lastIndexOf('}')+1);\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -7711,9 +7703,9 @@
         "icon": "font-awesome/fa-hospital-o"
     },
     {
-        "id": "5647d36650e91f33",
+        "id": "0dcf7393656c31b0",
         "type": "subflow:9d5f683315a5a542",
-        "z": "314cbd8f3eaf8d69",
+        "z": "9a507b03.7f5ac",
         "name": "",
         "env": [
             {
@@ -7724,23 +7716,24 @@
             {
                 "name": "loginPW",
                 "type": "cred"
+            },
+            {
+                "name": "srRefresh",
+                "type": "bool",
+                "value": "true"
             }
         ],
-        "x": 530,
-        "y": 100,
+        "x": 3930,
+        "y": 200,
         "wires": [
             [
-                "e747e35092fb2a38",
-                "80ad3f2fed4c16d6"
+                "32610b103c7b9225",
+                "66a6b79d132a6279"
             ],
             [
-                "dae53ba1c69f4e34",
-                "aefd520a91ae60cf",
-                "5b6e3615bc33c8ac",
-                "3c379a94c8f6b2a1",
-                "ebdd35c01e9c97de",
-                "f971a6517405a84c",
-                "353f852b8592822e"
+                "e6c084e07e68d5b4",
+                "2997d35ab5317039",
+                "5244ab8221051ecb"
             ]
         ]
     }
