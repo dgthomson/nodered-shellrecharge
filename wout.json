@@ -4211,7 +4211,7 @@
         "rules": [
             {
                 "t": "regex",
-                "v": "(ready|^token|aftertoken|setup|vehicles|start|stop|reset|info|^poll|nopoll|flush|^refresh|norefresh)",
+                "v": "(ready|^token|aftertoken|setup|vehicles|start|stop|reset|info|^poll|nopoll|flush|^refresh|norefresh|energy)",
                 "vt": "str",
                 "case": false
             }
@@ -5410,6 +5410,7 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
+        "credentials": {},
         "x": 890,
         "y": 900,
         "wires": [
@@ -7717,12 +7718,12 @@
         "env": [
             {
                 "name": "loginID",
-                "value": "EMAIL@ADDRESS.COM",
+                "value": "dgthomson@gmail.com",
                 "type": "str"
             },
             {
                 "name": "loginPW",
-                "type": "PASSWORD"
+                "type": "cred"
             }
         ],
         "x": 530,
