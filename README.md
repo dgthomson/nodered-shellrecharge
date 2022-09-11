@@ -6,7 +6,7 @@ This subflow will control Shell Recharge or Newmotion car charging equipment.
 
 ## Getting started
 
-Drag the Shell Recharge node into a flow.
+In Node-RED, click the top-right MENU icon (hamburger) then click **Import**. The option **Paste flow json or select a file to import** can be found here. Choose **nr-shellrecharge.json** (downloaded from this webpage) and then drop the imported nodes on to your flow.
 
 Double-click on the new node.
 
