@@ -4,6 +4,8 @@ This subflow will control Shell Recharge or Newmotion car charging equipment.
 
 **The most recent version is nr-shellrecharge.json.**
 
+**26-Feb-2023**: changes at Shell Recharge have broken the retrieval of energy consumption data for 'info' and 'energy', however the information needed for _Charger ID_ and _Card ID_ is still provided.
+
 ## Getting started
 
 In Node-RED, click the top-right MENU icon (hamburger) then click **Import**. The option **Paste flow json or select a file to import** can be found here. Choose **nr-shellrecharge.json** (downloaded from this webpage) and then drop the imported nodes on to your flow.
