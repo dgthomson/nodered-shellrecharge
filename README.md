@@ -2,9 +2,11 @@
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
-**The most recent version is nr-shellrecharge.json.**
-
-**26-Feb-2023**: changes at Shell Recharge have broken the retrieval of energy consumption data for 'info' and 'energy', however the information needed for _Charger ID_ and _Card ID_ is still provided.
+> __Note__
+>
+> The most recent version is nr-shellrecharge.json.
+>
+> 26-Feb-2023: changes at Shell Recharge have broken the retrieval of energy consumption data for 'info' and 'energy', however the information needed for _Charger ID_ and _Card ID_ is still provided.
 
 ## Getting started
 
