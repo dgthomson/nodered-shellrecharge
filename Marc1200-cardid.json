@@ -7894,7 +7894,7 @@
         ],
         "icon": "node-red/parser-html.svg",
         "l": false,
-        "info": "Adjustments for Mark1200: msg.cardid:<number>"
+        "info": "Adjustments for Mark1200: msg.payload.cardid:<number>"
     },
     {
         "id": "0dcf7393656c31b0",
