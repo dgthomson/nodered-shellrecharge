@@ -20,6 +20,8 @@ To find suitable values for _Charger ID_ and _Card ID_, send a payload (using an
 
 Inspect the output (by connecting a debug node to the **_Debug_** output). Choose a suitable charger and RFID token card/keyfob- these match the details shown on the Shell Recharge website. The array index for _msg.payload.chargePoints_ and _msg.payload.chargeTokens_ should be entered in the configuration fields _Charger ID_ and _Card ID_ respectively.
 
+<img width="438" alt="Data" src="https://user-images.githubusercontent.com/2021563/221404599-3fc7cf22-d4d2-4f6d-a7b0-1c2da7774fa2.png">
+
 _Poll_ should be left unchecked initially (see below).
 
 _Automatically refresh token_ will keep a session active by refreshing the Shell Recharge API token every 24 hours.
