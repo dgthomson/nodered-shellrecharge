@@ -142,9 +142,6 @@
             "keywords": "shell,recharge,new,motion,newmotion,evse,charge",
             "license": "GPL-3.0"
         },
-        "credentials": {
-            "loginPW": ""
-        },
         "color": "#0097A9",
         "inputLabels": [
             "Input"
@@ -1300,7 +1297,7 @@
                 "t": "set",
                 "p": "cacheShellRecharge.tID",
                 "pt": "flow",
-                "to": "$exists($.cardid) ? $.cardid : $env('tID')",
+                "to": "$exists($.payload.cardid) ? $.payload.cardid : $env('tID')",
                 "tot": "jsonata"
             }
         ],
