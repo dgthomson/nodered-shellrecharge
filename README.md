@@ -2,9 +2,9 @@
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
+The most recent version is nr-shellrecharge.json.
+
 > __Note__
->
-> The most recent version is nr-shellrecharge.json.
 >
 > 26-Feb-2023: changes at Shell Recharge have broken the retrieval of energy consumption data for 'info' and 'energy', however the information needed for _Charger ID_ and _Card ID_ is still provided.
 
@@ -27,6 +27,12 @@ Inspect the output (by connecting a debug node to the **_Debug_** output). Choos
 _Poll_ should be left unchecked initially (see below).
 
 _Automatically refresh token_ will keep a session active by refreshing the Shell Recharge API token every 24 hours.
+
+> __Warning__ 
+>
+> Card ID and Charger ID must only contain a number derived from the process above. Do not enter the charge card number as printed on a key fob/RFID token card or charge point serial number.
+>
+> <img width="493" alt="Screenshot 2023-02-26 at 11 15 27" src="https://user-images.githubusercontent.com/2021563/221416402-dcf6de7b-a260-4730-b201-865174e37598.png">
 
 ## Inputs
 
