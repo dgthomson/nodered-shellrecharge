@@ -56,7 +56,7 @@ Reset the charging equipment.
 
 This gives similar output to  **setup** above. The information may be returned from the cache; use **flush** first to update it if changes have been made on the Shell Recharge website.
 
-Energy consumption data is also returned if there is an active Shell Recharge subscription _(beta)_. Additional payload parameters are _from_ and _to_ which should be set as a Unix Epoch time which will output for the period interval specified. Usually, 50 results are given per query; use _offset_ with _(number) n_ to select a batch of results from _n_ to _(n + 50)_.
+~~Energy consumption data is also returned if there is an active Shell Recharge subscription _(beta)_. Additional payload parameters are _from_ and _to_ which should be set as a Unix Epoch time which will output for the period interval specified. Usually, 50 results are given per query; use _offset_ with _(number) n_ to select a batch of results from _n_ to _(n + 50)_.~~
 
 **poll** and **nopoll**
 
@@ -86,9 +86,9 @@ Keep a session active by refreshing the Shell Recharge API token every 24 hours 
 
 List the vehicles set up on the Shell Recharge account.
 
-**energy**
+~~**energy**~~
 
-Similar to **info**, but uses another (less-reliable) Shell Recharge API to return energy consumption data.
+~~Similar to **info**, but uses another (less-reliable) Shell Recharge API to return energy consumption data.~~
 
 ## Outputs
 
