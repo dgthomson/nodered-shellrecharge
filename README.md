@@ -2,7 +2,7 @@
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
-The most recent version is nr-shellrecharge.json.
+The most recent version is shell-recharge-20230401.json.
 
 > __Note__
 >
