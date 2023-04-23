@@ -84,7 +84,7 @@ The **_Output_** payload is _(boolean) true_ if a charge is in progress, otherwi
 
 _HTTP Error [401:x]_
 
-This means 'Unauthorised'. Check your username and password, or try _expire_,
+This means 'Unauthorised'. Check your username and password, or try _expire_.
 
 Otherwise, get in touch.
 
