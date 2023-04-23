@@ -2,6 +2,8 @@
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
+The latest version is **sr-2-19.json**.
+
 ## Getting started
 
 Drag the Shell Recharge node into a flow.
