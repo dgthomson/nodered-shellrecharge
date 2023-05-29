@@ -1,0 +1,39 @@
+type: entities
+entities:
+  - type: custom:template-entity-row
+    name: Charger
+    icon: >-
+      {% if int(states("sensor.XC40_battery_level_nr")) >= 90
+      %}mdi:battery-charging-high{% elif
+      int(states("sensor.XC40_battery_level_nr")) >= 60
+      %}mdi:battery-charging-medium{% elif
+      int(states("sensor.XC40_battery_level_nr")) >= 30
+      %}mdi:battery-charging-low{% elif
+      int(states("sensor.XC40_battery_level_nr")) <= 10
+      %}mdi:battery-charging-outline{% endif %}
+    entity: switch.35o_charging_switch
+    toggle: true
+    xactive: >-
+      {{ is_state("sensor.35o_charger_status", ["Charging", "Occupied",
+      "Pending"]) }}
+    active: '{{ is_state("switch.35o_charging_switch", "on") }}'
+    color: >-
+      {{ is_state("binary_sensor.35o_charging_sensor", "on") |
+      iif("var(--state-active-color)") }}
+    secondary: >-
+      {{ states('sensor.35o_charger_status') }} – {{
+      states('sensor.XC40_battery_level_nr')|round(0,default=0) }}% ({{
+      (states('sensor.XC40_battery_range')|float(default=0) *
+      0.621371)|round(1) }} mi)
+  - entity: button.35o_charging_poll
+    name: Update status
+  - type: divider
+  - type: custom:template-entity-row
+    name: Air conditioning
+    icon: mdi:hvac
+    entity: switch.XC40_heater
+    toggle: true
+    active: '{{ is_state("switch.XC40_heater", "on") }}'
+    color: >-
+      {{ is_state("switch.XC40_heater", "on") |
+      iif("var(--state-active-color)") }}
