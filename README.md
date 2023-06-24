@@ -52,13 +52,15 @@ Reset the charging equipment.
 
 Poll the charging equipment once for status information: this gives details directly from Shell Recharge like _'Charging'_ and _'Occupied'_. 
 
+> msg.payload = { "action": "poll" }
+
 **rpoll** and **nopoll**
 
 Repeatedly poll the charging equipment for status information.
 
-The polling interval (in seconds) can be set in (number) _msg.poll.interval_ and the duration (in seconds) can be set in (number) _msg.poll.duration_, for example:
+The polling interval (in seconds) can be set in (number) _msg.rpoll.interval_ and the duration (in seconds) can be set in (number) _msg.rpoll.duration_, for example:
 
-> msg.payload = { "action": "poll", "poll": {"interval": 5, "duration": 20 } }
+> msg.payload = { "action": "rpoll", "poll": {"interval": 5, "duration": 20 } }
 
 This would poll every 5 seconds for 20 seconds.
 
