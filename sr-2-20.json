@@ -1,0 +1,7177 @@
+[
+    {
+        "id": "9a423f990bb6db5c",
+        "type": "subflow",
+        "name": "Shell Recharge",
+        "info": "## About this subflow\n\nThis subflow will control Shell Recharge or Newmotion car charging equipment.\n\n## Getting started\n\nDrag the Shell Recharge node into a flow.\n\nDouble-click on the new node.\n\nUsing the credentials used to login to the Shell Recharge website, enter the username and password into the respective fields.\n\nTo find suitable values for _Charger ID_ and _Card ID_, send a payload (using an inject node, for example) to **_Input_** containing:\n\n> msg.payload = { \"action\": \"setup\" }\n\nInspect the output (by connecting a debug node to the **_Debug_** output). Choose a suitable charger and RFID token card/keyfob- these match the details shown on the Shell Recharge website. The array index for _msg.payload.chargePoints_ and _msg.payload.chargeTokens_ should be entered in the configuration fields _Charger ID_ and _Card ID_ respectively.\n\n## Inputs\n\n> msg.payload = { \"action\": \"_ACTION_\" }\n\n...where _ACTION_ is:\n\n**start** and **stop**\n\nStart or stop a charging session using the configured charger and RFID card/token.\n\nOverride the node settings for _Charger ID ('cid')_ and _Card ID ('tid')_ with:\n\n> msg.payload = { \"action\": \"start\", \"cid\": _\\<number\\>_, \"tid\": _\\<number\\>_ }\n\nAdd a random delay (between 0 and 5 minutes) to the start of a charge with:\n\n> msg.payload = { \"action\": \"start\", \"delay\": true }\n\n**reset**\n\nReset the charging equipment.\n\n**poll**\n\nPoll the charging equipment once for status information: this gives details directly from Shell Recharge like _'Charging'_ and _'Occupied'_. \n\n> msg.payload = { \"action\": \"poll\" }\n\n**rpoll** and **nopoll**\n\nRepeatedly poll the charging equipment for status information.\n\nThe polling interval (in seconds) can be set in (number) _msg.rpoll.interval_ and the duration (in seconds) can be set in (number) _msg.rpoll.duration_, for example:\n\n> msg.payload = { \"action\": \"rpoll\", \"poll\": {\"interval\": 5, \"duration\": 20 } }\n\nThis would poll every 5 seconds for 20 seconds.\n\nStop polling with _nopoll_.\n\n**expire**\n\nDelete the current Shell Recharge API token. This will force a login attempt during the next interaction with Shell Recharge.\n\n**flush**\n\nDelete the current Shell Recharge API token, session and cache (which stores account details like chargers and token cards).\n\n**dump**\n\nShow the internal cache.\n\n## Outputs\n\nThe **_Output_** payload is _(boolean) true_ if a charge is in progress, otherwise it is _(boolean) false_. This is also updated when polling is in progress. All other output is from **_Debug_** labelled with topics like _status_, _poll_, _response_ and _error_.\n\n## Problems\n\n_HTTP Error [401:x]_\n\nThis means 'Unauthorised'. Check your username and password, or try _expire_,\n\nOtherwise, get in touch.\n\n## Contact\n\nvia [Github](https://github.com/dgthomson/nodered-shellrecharge)",
+        "category": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 100,
+                "wires": [
+                    {
+                        "id": "6c92fa7cc842f821"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 450,
+                "y": 520,
+                "wires": [
+                    {
+                        "id": "82262cf778a84017",
+                        "port": 0
+                    }
+                ]
+            },
+            {
+                "x": 450,
+                "y": 420,
+                "wires": [
+                    {
+                        "id": "e835bec8486dc7d7",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "loginID",
+                "type": "str",
+                "value": "",
+                "ui": {
+                    "icon": "font-awesome/fa-user-circle-o",
+                    "label": {
+                        "en-US": "Username"
+                    },
+                    "type": "input",
+                    "opts": {
+                        "types": [
+                            "str"
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "loginPW",
+                "type": "cred",
+                "ui": {
+                    "icon": "font-awesome/fa-unlock-alt",
+                    "label": {
+                        "en-US": "Password"
+                    }
+                }
+            },
+            {
+                "name": "cpID",
+                "type": "num",
+                "value": "0",
+                "ui": {
+                    "icon": "font-awesome/fa-plug",
+                    "label": {
+                        "en-US": "Charger ID"
+                    },
+                    "type": "input",
+                    "opts": {
+                        "types": [
+                            "num"
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "tID",
+                "type": "num",
+                "value": "0",
+                "ui": {
+                    "icon": "font-awesome/fa-id-card-o",
+                    "label": {
+                        "en-US": "Card ID"
+                    },
+                    "type": "input",
+                    "opts": {
+                        "types": [
+                            "num"
+                        ]
+                    }
+                }
+            }
+        ],
+        "meta": {
+            "module": "Shell Recharge",
+            "type": "dgt.nodered.35e.shellrecharge",
+            "version": "2.20 (2023-06-24)",
+            "author": "David Thomson <dgthomson@gmail.com>",
+            "desc": "Nodered subflow to control Shell Recharge equipment.",
+            "keywords": "shell,recharge,shell recharge,new,motion,newmotion,evse,charge",
+            "license": "GPL-3.0"
+        },
+        "credentials": {
+            "loginPW": ""
+        },
+        "color": "#0097A9",
+        "inputLabels": [
+            "Input"
+        ],
+        "outputLabels": [
+            "Output",
+            "Debug"
+        ],
+        "icon": "font-awesome/fa-plug",
+        "status": {
+            "x": 1640,
+            "y": 100,
+            "wires": [
+                {
+                    "id": "a9d322f92ba56071",
+                    "port": 0
+                }
+            ]
+        }
+    },
+    {
+        "id": "0df79bfee0de96ef",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "OUTPUT1",
+        "links": [
+            "020e7f1749dd7ddd",
+            "2e3a375d3f971eba",
+            "ab6018698e44f994",
+            "d6a00be1229756c5",
+            "ed87ec09b5e2948d"
+        ],
+        "x": 55,
+        "y": 520,
+        "wires": [
+            [
+                "93f25d4416560160"
+            ]
+        ],
+        "icon": "font-awesome/fa-sign-out"
+    },
+    {
+        "id": "864485bf0efdf86b",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "SROUTPUT2",
+        "links": [
+            "7fa782a903687ad2",
+            "f89a97fceed6b492",
+            "13367e0d99d9693e",
+            "2252bc561f2c4845",
+            "a3ef511fa01b19e9",
+            "bc32a0a2edd07bbe",
+            "c77a122dfe913043",
+            "799e46527f98986d",
+            "beca00f1bc48a61d",
+            "929fc26e3bd6ba5a",
+            "f6474e4826c3d1df",
+            "248f63eddcb4845c",
+            "bfb78be84d956bc9",
+            "10e8d17b21aca2dc",
+            "12403bf80e324041",
+            "be7607aaf54e138d",
+            "b5fade3544e0231c",
+            "a0ee34f08eb0ac2b",
+            "f02716fbfd3a1dc7",
+            "9ae15a6c02565d8d",
+            "580c5399c35e8662",
+            "f3825595cf0b4190",
+            "9543ee7f0490e13f",
+            "a275570246f6788f",
+            "d2a78d42a1208c85",
+            "a214d7f5154dd51e"
+        ],
+        "x": 915,
+        "y": 180,
+        "wires": [
+            [
+                "d79e3f9c5972ef3d"
+            ]
+        ],
+        "icon": "font-awesome/fa-bug"
+    },
+    {
+        "id": "2708f3e352f31496",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "SROUTPUTSTATUS",
+        "links": [
+            "09d83ae1bf7ab610",
+            "35894b5bfdbd3059",
+            "4f9a2d5bab908391",
+            "3773f36776a062d9",
+            "b093ea0e96bdf301",
+            "8bfa9f233fcb411c",
+            "5865e533a9670f02",
+            "5bc1756b87e53356",
+            "e39046379025fd99",
+            "7fa782a903687ad2",
+            "13367e0d99d9693e",
+            "58dbf66b745dd93e",
+            "66b5fecbb727ba3f",
+            "1b3b61d9e23f7e6e",
+            "61f766cfc40aaa79",
+            "89b352954ff2e66f",
+            "beca00f1bc48a61d",
+            "fdc093d47db34714",
+            "e711964fdfc079d7",
+            "e0d51983c9644ba9",
+            "4480103690ae324c",
+            "25613a6acd72448a",
+            "8ebb3bf0120a5378",
+            "e277ef9413e4287f",
+            "29627b65363c1d52",
+            "d19331b49e0282a1",
+            "5b88e673b5945670",
+            "08aaf36647c46378",
+            "cc2c3b1b4d4c64ed",
+            "5f40a37e5353c608",
+            "c1889da539f802dc",
+            "2e635ca992e57916",
+            "444de6cb3990df57",
+            "a2d9d1277696648b",
+            "3a05b1b731c149a6",
+            "25f760abc23d7996",
+            "bfb39654ab47de36",
+            "016ddc9faeae1007",
+            "4cb3051be13e2e85",
+            "e960b883368fd0b7",
+            "fb1b6df550bdf7b0",
+            "733e74ebf5433cde",
+            "31d41ac67b960f48",
+            "af794beed5d2fab2",
+            "7d30089edaca0d00",
+            "90200b6374f16c62",
+            "11dbafd7498d0305",
+            "8ce15f311719ecbe",
+            "a49b342613bca914",
+            "9df932c893ca1c95",
+            "77a109b970bf9b24",
+            "9f763835b6f460f2",
+            "a7c21634de86781a",
+            "c0d1d2c322b9c6f5",
+            "0d49ef942b918fb9",
+            "6c1845b42e10cbbc",
+            "359a7e2275e23706",
+            "56646af01505185a",
+            "14ebb707e073d58e",
+            "01d5c6d687287135"
+        ],
+        "x": 915,
+        "y": 100,
+        "wires": [
+            [
+                "2a2bf7c0473d7d8b",
+                "e45b2ec09e8b435a"
+            ]
+        ],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "9ce27e794d27c50f",
+        "type": "trigger",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "op1": "",
+        "op2": "{\"text\":\"\",\"fill\":\"\"}",
+        "op1type": "nul",
+        "op2type": "json",
+        "duration": "5",
+        "extend": true,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1095,
+        "y": 140,
+        "wires": [
+            [
+                "34b5b1db743d0bc1"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "02f8a672c4061cc7",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "status",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1035,
+        "y": 140,
+        "wires": [
+            [
+                "d79e3f9c5972ef3d"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "2a2bf7c0473d7d8b",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "regex",
+                "v": "(error|^poll)",
+                "vt": "str",
+                "case": false
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 975,
+        "y": 140,
+        "wires": [
+            [],
+            [
+                "02f8a672c4061cc7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "34b5b1db743d0bc1",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1155,
+        "y": 100,
+        "wires": [
+            [
+                "76437255789787da"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "2be3cbfbab71c76a",
+        "type": "catch",
+        "z": "9a423f990bb6db5c",
+        "name": "Catch HTTP errors",
+        "scope": [
+            "4b5222e9d5a051b2"
+        ],
+        "uncaught": false,
+        "x": 1395,
+        "y": 140,
+        "wires": [
+            [
+                "5f5e8ed1a6c717fa"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8b2978909252be23",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "error",
+                "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1515,
+        "y": 140,
+        "wires": [
+            [
+                "778839c4b150ffe5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5f5e8ed1a6c717fa",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"text\":\"Error: check debug output\",\"fill\":\"red\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1455,
+        "y": 140,
+        "wires": [
+            [
+                "8b2978909252be23",
+                "a9d322f92ba56071"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a9d322f92ba56071",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "error",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1515,
+        "y": 100,
+        "wires": [
+            []
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "3b59d733acb39de1",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "NMERROR",
+        "links": [
+            "2cdffcd224d9cf5c",
+            "8f3bc6ecaf3c763e",
+            "096b32113865e361",
+            "3d9aa0b3c7559b83"
+        ],
+        "x": 1155,
+        "y": 140,
+        "wires": [
+            [
+                "735f0cad7099de29"
+            ]
+        ],
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "05fb8a20659dfdc9",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.fill",
+                "pt": "msg",
+                "to": "red",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1275,
+        "y": 140,
+        "wires": [
+            [
+                "76437255789787da",
+                "17315851e3d9a2ef"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "76437255789787da",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1335,
+        "y": 100,
+        "wires": [
+            [
+                "226cc809f69de354"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "17315851e3d9a2ef",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.text",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "error",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1335,
+        "y": 140,
+        "wires": [
+            [
+                "74dcfd175dc12f8e"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "74dcfd175dc12f8e",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1395,
+        "y": 180,
+        "wires": [
+            [
+                "778839c4b150ffe5"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "8c7f62258e092f38",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "⮑ OUTPUT1 [2023-04-08]",
+        "info": "",
+        "x": 150,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "ffba036ad6f097d5",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Login...",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Login...",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 475,
+        "y": 980,
+        "wires": [
+            [
+                "3a05b1b731c149a6"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "aa666bcb94c9c388",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP parameters",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "https://account.shellrecharge.com/",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "GET",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "2000",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.payload",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 415,
+        "y": 940,
+        "wires": [
+            [
+                "ffba036ad6f097d5",
+                "d06715410a313b0b"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "cd4586ca7a9776f4",
+        "type": "html",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload.html",
+        "outproperty": "payload.html",
+        "tag": "[id=login-email]",
+        "ret": "attr",
+        "as": "single",
+        "x": 655,
+        "y": 940,
+        "wires": [
+            [
+                "a98e94f31c1ce2f5"
+            ]
+        ],
+        "icon": "font-awesome/fa-eyedropper",
+        "l": false
+    },
+    {
+        "id": "cf53cc12e1a7130d",
+        "type": "join",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "custom",
+        "build": "merged",
+        "property": "payload.login",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "4",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 795,
+        "y": 940,
+        "wires": [
+            [
+                "575585670949c887",
+                "4d59dfc1018a7b19",
+                "66a57949dd2f9d7f",
+                "765e40d653f8620c",
+                "0bbc95b8d3d17aa3",
+                "b47a29dc563a9943"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "cdcccceda928c826",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.html",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.session",
+                "pt": "msg",
+                "to": "responseCookies.JSESSIONID.value",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 595,
+        "y": 940,
+        "wires": [
+            [
+                "cd4586ca7a9776f4",
+                "6a950faebb5ae34e",
+                "d0f469f305b949da",
+                "62afd95e32ab0cf4"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "6a950faebb5ae34e",
+        "type": "html",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload.html",
+        "outproperty": "payload.html",
+        "tag": "[id=login-pwd]",
+        "ret": "attr",
+        "as": "single",
+        "x": 655,
+        "y": 980,
+        "wires": [
+            [
+                "a694d4db2178d6bb"
+            ]
+        ],
+        "icon": "font-awesome/fa-eyedropper",
+        "l": false
+    },
+    {
+        "id": "a694d4db2178d6bb",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.login.password.id",
+                "pt": "msg",
+                "to": "payload.html[0].name",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.login.password.tx",
+                "pt": "msg",
+                "to": "shellrecharge.auth.pw",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 715,
+        "y": 980,
+        "wires": [
+            [
+                "cf53cc12e1a7130d"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "d0f469f305b949da",
+        "type": "html",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload.html",
+        "outproperty": "payload.html",
+        "tag": "input[type=hidden]",
+        "ret": "attr",
+        "as": "single",
+        "x": 655,
+        "y": 1020,
+        "wires": [
+            [
+                "40849ccd05dfe2be"
+            ]
+        ],
+        "icon": "font-awesome/fa-eyedropper",
+        "l": false
+    },
+    {
+        "id": "40849ccd05dfe2be",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.login.hidden.id",
+                "pt": "msg",
+                "to": "payload.html[0].name",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.login.hidden.tx",
+                "pt": "msg",
+                "to": "payload.html[0].value",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 715,
+        "y": 1020,
+        "wires": [
+            [
+                "cf53cc12e1a7130d"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "62afd95e32ab0cf4",
+        "type": "html",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload.html",
+        "outproperty": "payload.html",
+        "tag": "script:contains(lift_page)",
+        "ret": "html",
+        "as": "single",
+        "x": 655,
+        "y": 1060,
+        "wires": [
+            [
+                "ecc5855fd21ccac5"
+            ]
+        ],
+        "icon": "font-awesome/fa-eyedropper",
+        "l": false
+    },
+    {
+        "id": "ecc5855fd21ccac5",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "func": "var pos = msg.payload.html[0].indexOf('var lift_page = ')+'var lift_page = '.length+1;\nmsg.payload = msg.payload.html[0].substr(pos).split('\"')[0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 715,
+        "y": 1060,
+        "wires": [
+            [
+                "3b30c86a67921f66"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "3b30c86a67921f66",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.login.ajax.id",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 775,
+        "y": 1060,
+        "wires": [
+            [
+                "cf53cc12e1a7130d"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a98e94f31c1ce2f5",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.login.email.id",
+                "pt": "msg",
+                "to": "payload.html[0].name",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.login.email.tx",
+                "pt": "msg",
+                "to": "shellrecharge.auth.id",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 715,
+        "y": 940,
+        "wires": [
+            [
+                "cf53cc12e1a7130d"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e06e53c31e79e8ef",
+        "type": "template",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"{{{payload.login.email.id}}}\"    : \"{{{payload.login.email.tx}}}\",\n    \"{{{payload.login.password.id}}}\" : \"{{{payload.login.password.tx}}}\",\n    \"{{{payload.login.hidden.id}}}\"   : \"{{{payload.login.hidden.tx}}}\"\n}",
+        "output": "json",
+        "x": 1075,
+        "y": 940,
+        "wires": [
+            [
+                "7b2ca2ef2eb1f8b1"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "7b2ca2ef2eb1f8b1",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "func": "var formBody = [];\nfor (var property in msg.payload) {\n  var encodedKey   = encodeURIComponent(property);\n  var encodedValue = encodeURIComponent(msg.payload[property]);\n  formBody.push(encodedKey + \"=\" + encodedValue);\n}\nformBody = formBody.join(\"&\");\nmsg.payload = formBody;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "var offset  = new Date().getTimezoneOffset();\nvar sign    = Math.sign(offset) == -1 ? \"+\" : \"-\"; \nvar hours   = String(\"00\" + Math.abs(offset/60>>0)).slice(-2);\nvar minutes = String(\"00\" + offset % 60).slice(-2);\nflow.set(\"srTZ\",sign+hours+minutes);",
+        "finalize": "",
+        "libs": [],
+        "x": 1135,
+        "y": 940,
+        "wires": [
+            [
+                "bc31477b0e6470bc"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5d7b2da421836bf9",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "cacheShellRecharge.session",
+                "pt": "flow",
+                "to": "cookies.JSESSIONID.value",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "POST",
+                "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "headers",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "statusCode",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "responseUrl",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "redirectList",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "retry",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "responseCookies",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "'https://account.shellrecharge.com/ajax_request/' & $.payload.login.ajax.id & '-00/'",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "5000",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{\"User-Agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15\",\"Connection\":\"keep-alive\",\"Content-Type\":\"application/x-www-form-urlencoded; charset=UTF-8\",\"Referer\":\"https://account.shellrecharge.com/\",\"Accept-Encoding\":\"gzip, deflate, br\",\"Accept-Language\":\"en-gb\",\"X-Requested-With\":\"XMLHttpRequest\",\"Origin\":\"https://account.shellrecharge.com\",\"Accept\":\"text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1015,
+        "y": 940,
+        "wires": [
+            [
+                "e06e53c31e79e8ef"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "f0f64624373a1369",
+        "type": "join",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "custom",
+        "build": "merged",
+        "property": "cookies",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "6",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 955,
+        "y": 940,
+        "wires": [
+            [
+                "5d7b2da421836bf9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "575585670949c887",
+        "type": "template",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "field": "cookies[\"AWSALBAPP-0\"]",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\"value\":\"{{{responseCookies.AWSALBAPP-0.value}}}\",\"encode\":false}",
+        "output": "json",
+        "x": 875,
+        "y": 940,
+        "wires": [
+            [
+                "f0f64624373a1369"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4d59dfc1018a7b19",
+        "type": "template",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "field": "cookies[\"AWSALBAPP-1\"]",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\"value\":\"{{{responseCookies.AWSALBAPP-1.value}}}\",\"encode\":false}",
+        "output": "json",
+        "x": 875,
+        "y": 980,
+        "wires": [
+            [
+                "f0f64624373a1369"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "66a57949dd2f9d7f",
+        "type": "template",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "field": "cookies[\"AWSALBAPP-2\"]",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\"value\":\"{{{responseCookies.AWSALBAPP-2.value}}}\",\"encode\":false}",
+        "output": "json",
+        "x": 875,
+        "y": 1020,
+        "wires": [
+            [
+                "f0f64624373a1369"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "765e40d653f8620c",
+        "type": "template",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "field": "cookies[\"AWSALBAPP-3\"]",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\"value\":\"{{{responseCookies.AWSALBAPP-3.value}}}\",\"encode\":false}",
+        "output": "json",
+        "x": 875,
+        "y": 1060,
+        "wires": [
+            [
+                "f0f64624373a1369"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "0bbc95b8d3d17aa3",
+        "type": "template",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "field": "cookies[\"JSESSIONID\"]",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\"value\":\"{{{responseCookies.JSESSIONID.value}}}\",\"encode\":false}",
+        "output": "json",
+        "x": 875,
+        "y": 1100,
+        "wires": [
+            [
+                "f0f64624373a1369"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b47a29dc563a9943",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "cookies[\"language.code.selection\"]",
+                "pt": "msg",
+                "to": "en",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 875,
+        "y": 1140,
+        "wires": [
+            [
+                "f0f64624373a1369"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c4b61295dcb891bf",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnGETTOKEN",
+        "links": [],
+        "x": 55,
+        "y": 940,
+        "wires": [
+            [
+                "03b1642c334f9999"
+            ]
+        ]
+    },
+    {
+        "id": "775751c3cf2f15f2",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP parameters",
+        "rules": [
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "GET",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "https://ui-chargepoints.shellrecharge.com/api/facade/v1/me/asset-overview",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.language.code.selection",
+                "pt": "msg",
+                "to": "en",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.tnm_api",
+                "pt": "msg",
+                "to": "shellrecharge.auth.token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "headers.content_type",
+                "pt": "msg",
+                "to": "application/octet-stream",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "2000",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 620,
+        "wires": [
+            [
+                "51161685a7bf6a78"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "9ad84417d596cdb8",
+        "type": "json",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 475,
+        "y": 620,
+        "wires": [
+            [
+                "6d9b1b7c015883cb"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "f2f9dbc5fefef1eb",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.auth.token",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 295,
+        "y": 940,
+        "wires": [
+            [
+                "ee205c4f3f5b8cd6"
+            ],
+            [
+                "074b40e83b7f7c64"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "074b40e83b7f7c64",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.session",
+                "pt": "msg",
+                "to": "shellrecharge.auth.session",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.token",
+                "pt": "msg",
+                "to": "shellrecharge.auth.token",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 980,
+        "wires": [
+            [
+                "38e92939794c2bbd"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "38e92939794c2bbd",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "fnGETTOKENRETURN",
+        "mode": "return",
+        "links": [],
+        "x": 415,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "ee205c4f3f5b8cd6",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 940,
+        "wires": [
+            [
+                "aa666bcb94c9c388"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "6d9b1b7c015883cb",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.chargePoints",
+                "pt": "msg",
+                "to": "payload.chargePoints",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.chargeTokens",
+                "pt": "msg",
+                "to": "payload.chargeTokens",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.chargePoints",
+                "pt": "flow",
+                "to": "payload.chargePoints",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.chargeTokens",
+                "pt": "flow",
+                "to": "payload.chargeTokens",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 655,
+        "y": 620,
+        "wires": [
+            [
+                "64aaa4feb63cf0ad"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "6c92fa7cc842f821",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c263bd3f6d9b307e"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 115,
+        "y": 100,
+        "wires": [
+            [
+                "6ad6a1a725b013c3"
+            ]
+        ],
+        "icon": "font-awesome/fa-cogs",
+        "l": false
+    },
+    {
+        "id": "c263bd3f6d9b307e",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnSETUP",
+        "links": [],
+        "x": 55,
+        "y": 800,
+        "wires": [
+            [
+                "5686248cd4895ddd"
+            ]
+        ]
+    },
+    {
+        "id": "64d71c9dece573cb",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP parameters",
+        "rules": [
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "GET",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "https://ui-chargepoints.shellrecharge.com/api/facade/v1/me",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.language.code.selection",
+                "pt": "msg",
+                "to": "en",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.tnm_api",
+                "pt": "msg",
+                "to": "shellrecharge.auth.token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "application/octet-stream",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "headers.accept",
+                "pt": "msg",
+                "to": "application/json",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "2000",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 660,
+        "wires": [
+            [
+                "85bfa969a8d6596c"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "23654038c7078db7",
+        "type": "json",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 475,
+        "y": 660,
+        "wires": [
+            [
+                "fe88533b7d92fc40"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c468963a8ef70f34",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP parameters",
+        "rules": [
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "GET",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "https://ui-mynm-my-vehicles.shellrecharge.com/api/facade/v1/me/vehicles",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.language.code.selection",
+                "pt": "msg",
+                "to": "en",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.tnm_api",
+                "pt": "msg",
+                "to": "shellrecharge.auth.token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "application/octet-stream",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "headers.accept",
+                "pt": "msg",
+                "to": "application/json",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "2000",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 700,
+        "wires": [
+            [
+                "e150e0d5b0adac66"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "082fab3e72f6d4fb",
+        "type": "json",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 475,
+        "y": 700,
+        "wires": [
+            [
+                "c9bd23e57adf8eb0"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c9bd23e57adf8eb0",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload._embedded",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 535,
+        "y": 700,
+        "wires": [
+            [
+                "316d7a7c20578de1"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "316d7a7c20578de1",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "function 14",
+        "func": "msg.payload.vehicles.forEach(function (currentValue, index, arr) {\n    delete msg.payload.vehicles[index]._links;\n})\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 595,
+        "y": 700,
+        "wires": [
+            [
+                "a0b7f50c8e92af7c"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "64aaa4feb63cf0ad",
+        "type": "join",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "custom",
+        "build": "merged",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "4",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 715,
+        "y": 700,
+        "wires": [
+            [
+                "4e47dda95669e484",
+                "3b79b69f09f14292"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "fe88533b7d92fc40",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload._links",
+                "pt": "msg"
+            },
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.identity",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.identity",
+                "pt": "flow",
+                "to": "payload.identity",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 655,
+        "y": 660,
+        "wires": [
+            [
+                "64aaa4feb63cf0ad"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a0b7f50c8e92af7c",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.vehicles",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.vehicles",
+                "pt": "flow",
+                "to": "payload.vehicles",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 655,
+        "y": 700,
+        "wires": [
+            [
+                "64aaa4feb63cf0ad"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "7b36ac4cb1440467",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "headers",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "cookies",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "method",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "url",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "statusCode",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "responseUrl",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "redirectList",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "retry",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "responseCookies",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "_event",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload._event",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "requestTimeout",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "query",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "delay",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 615,
+        "y": 420,
+        "wires": [
+            [
+                "6d29471841458c64"
+            ]
+        ],
+        "icon": "font-awesome/fa-bath",
+        "l": false
+    },
+    {
+        "id": "b18c194aedf3697f",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnSANITISE",
+        "links": [],
+        "x": 555,
+        "y": 420,
+        "wires": [
+            [
+                "7b36ac4cb1440467"
+            ]
+        ]
+    },
+    {
+        "id": "6d29471841458c64",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 15",
+        "mode": "return",
+        "links": [],
+        "x": 675,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "4e47dda95669e484",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 775,
+        "y": 700,
+        "wires": [
+            [
+                "9e01590229ae33f4"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "2314bd422165782c",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.chargeTokens",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 175,
+        "y": 620,
+        "wires": [
+            [
+                "abd6c3482714604a"
+            ],
+            [
+                "e3afa809c9d59c0b",
+                "e5bb4774757fa09a"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e3afa809c9d59c0b",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.chargeTokens",
+                "pt": "msg",
+                "to": "shellrecharge.chargeTokens",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "payload.chargePoints",
+                "pt": "msg",
+                "to": "shellrecharge.chargePoints",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "payload.vehicles",
+                "pt": "msg",
+                "to": "shellrecharge.vehicles",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "payload.identity",
+                "pt": "msg",
+                "to": "shellrecharge.identity",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 235,
+        "y": 660,
+        "wires": [
+            [
+                "1b44613537e84425"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "abd6c3482714604a",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 235,
+        "y": 620,
+        "wires": [
+            [
+                "6b83299e7f1b3333"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "484b17910ca1f7e3",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c94688723a82a593"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 275,
+        "y": 260,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c94688723a82a593",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnGETINFO",
+        "links": [],
+        "x": 55,
+        "y": 620,
+        "wires": [
+            [
+                "2c4052620acb5963"
+            ]
+        ]
+    },
+    {
+        "id": "1b44613537e84425",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 16",
+        "mode": "return",
+        "links": [],
+        "x": 295,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "9e01590229ae33f4",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 17",
+        "mode": "return",
+        "links": [],
+        "x": 835,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "99b7480f249abe17",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "Route [2023-04-09] ⮑ OUTPUT2",
+        "info": "",
+        "x": 170,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "2c4052620acb5963",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c4b61295dcb891bf"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 115,
+        "y": 620,
+        "wires": [
+            [
+                "2314bd422165782c"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "bcf57c3511981d21",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "shellrecharge",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "payload.auth.pw",
+                "pt": "msg",
+                "to": "🤫",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 275,
+        "y": 380,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "6b83299e7f1b3333",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 295,
+        "y": 620,
+        "wires": [
+            [
+                "775751c3cf2f15f2",
+                "64d71c9dece573cb",
+                "c468963a8ef70f34"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "9a9a44b7b3f64e69",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Status message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "shellrecharge.action",
+                "tot": "msg"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "start",
+                "fromt": "str",
+                "to": "Starting charger…",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "stop",
+                "fromt": "str",
+                "to": "Stopping charger…",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "reset",
+                "fromt": "str",
+                "to": "Resetting charger…",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1455,
+        "y": 780,
+        "wires": [
+            [
+                "e960b883368fd0b7"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "e960b883368fd0b7",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 1515,
+        "y": 780,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "ac6189ae1a0df6c9",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP parameters",
+        "rules": [
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "POST",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.language.code.selection",
+                "pt": "msg",
+                "to": "en",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.tnm_api",
+                "pt": "msg",
+                "to": "shellrecharge.auth.token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "application/json",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "headers.accept",
+                "pt": "msg",
+                "to": "text/html",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "2000",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1155,
+        "y": 740,
+        "wires": [
+            [
+                "73659d57e6e569c8"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false,
+        "info": "Adjustments for Mark1200: msg.cardid:<number>"
+    },
+    {
+        "id": "581026e7f5fc6642",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c4b61295dcb891bf"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1035,
+        "y": 740,
+        "wires": [
+            [
+                "bbcef82dbe42f196"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "bbcef82dbe42f196",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c94688723a82a593"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1095,
+        "y": 740,
+        "wires": [
+            [
+                "ac6189ae1a0df6c9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "bef2cbe3c5d65d05",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnCHARGERACTIONS",
+        "links": [],
+        "x": 915,
+        "y": 740,
+        "wires": [
+            [
+                "246e27ceacdb7247"
+            ]
+        ]
+    },
+    {
+        "id": "749f67fe302c7e58",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "bef2cbe3c5d65d05"
+        ],
+        "linkType": "static",
+        "timeout": "",
+        "x": 275,
+        "y": 100,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "f7cc29fad2efc88f",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 25",
+        "mode": "return",
+        "links": [],
+        "x": 1695,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "73659d57e6e569c8",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "function 15",
+        "func": "msg.url = 'https://ui-chargepoints.shellrecharge.com/api/facade/v1/charge-points/'\n    + msg.payload.chargePoints[msg.shellrecharge.cid][\"uuid\"]\n    + '/remote-control/'\n    + msg.shellrecharge.action\nmsg.payload.rfid = msg.payload.chargeTokens[msg.shellrecharge.tid][\"rfid\"]\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1215,
+        "y": 740,
+        "wires": [
+            [
+                "b4d0233d3c6c02c9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b4d0233d3c6c02c9",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP parameters",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.evseNo",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            },
+            {
+                "t": "move",
+                "p": "payload.chargePoints",
+                "pt": "msg",
+                "to": "shellrecharge.chargePoints",
+                "tot": "msg"
+            },
+            {
+                "t": "move",
+                "p": "payload.chargeTokens",
+                "pt": "msg",
+                "to": "shellrecharge.chargeTokens",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.vehicles",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.identity",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1275,
+        "y": 740,
+        "wires": [
+            [
+                "014b7d76110aa1d1"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false,
+        "info": "Adjustments for Mark1200: msg.cardid:<number>"
+    },
+    {
+        "id": "830c06ccccf43af6",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1515,
+        "y": 740,
+        "wires": [
+            [
+                "eb82c06f1534bd50"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "9bfe65211a4b46ef",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Status message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Cache flushed",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 675,
+        "y": 320,
+        "wires": [
+            [
+                "9f763835b6f460f2"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "eb82c06f1534bd50",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Status message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "shellrecharge.action",
+                "tot": "msg"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "start",
+                "fromt": "str",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "stop",
+                "fromt": "str",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "reset",
+                "fromt": "str",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "charging",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1575,
+        "y": 740,
+        "wires": [
+            [
+                "f7cc29fad2efc88f",
+                "8f33001f1139b12c"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "082bb41c276e6068",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "GET",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "https://ui-chargepoints.shellrecharge.com/api/facade/v1/me/asset-overview",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.language.code.selection",
+                "pt": "msg",
+                "to": "en",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "cookies.tnm_api",
+                "pt": "msg",
+                "to": "shellrecharge.auth.token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "headers.content_type",
+                "pt": "msg",
+                "to": "application/octet-stream",
+                "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "2000",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1035,
+        "y": 420,
+        "wires": [
+            [
+                "4b543da40262fe89"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "af3abce3ae1476f5",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$.payload = \"Charging\"",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "charging",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.charging",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1275,
+        "y": 460,
+        "wires": [
+            [
+                "0b2b718daf46c776"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "d6a00be1229756c5",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "0df79bfee0de96ef"
+        ],
+        "x": 1455,
+        "y": 460,
+        "wires": [],
+        "icon": "font-awesome/fa-sign-out"
+    },
+    {
+        "id": "62665ba989773eda",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "poll",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1395,
+        "y": 420,
+        "wires": [
+            [
+                "3516b226fd26c78a"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "0b2b718daf46c776",
+        "type": "rbe",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": false,
+        "property": "payload",
+        "topi": "topic",
+        "x": 1335,
+        "y": 460,
+        "wires": [
+            [
+                "d63b736dfcf793bf"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "55c9fc1255901756",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnPOLL",
+        "links": [
+            "f4e05f58c6fd4b53"
+        ],
+        "x": 915,
+        "y": 420,
+        "wires": [
+            [
+                "29d99ae8676c04af"
+            ]
+        ]
+    },
+    {
+        "id": "29d99ae8676c04af",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c4b61295dcb891bf"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 975,
+        "y": 420,
+        "wires": [
+            [
+                "082bb41c276e6068"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "efaecdd679bf7aaa",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "function 16",
+        "func": "msg.payload = msg.payload.chargePoints[msg.shellrecharge.cid].evses[0].status;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1215,
+        "y": 420,
+        "wires": [
+            [
+                "62665ba989773eda",
+                "af3abce3ae1476f5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "bcdf7ec7fb9f8b1e",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 30",
+        "mode": "return",
+        "links": [],
+        "x": 1635,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "4dc0b20b0942a461",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "55c9fc1255901756"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 275,
+        "y": 140,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "3516b226fd26c78a",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1455,
+        "y": 420,
+        "wires": [
+            [
+                "bcdf7ec7fb9f8b1e",
+                "ace6a9e257acc635"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "d63b736dfcf793bf",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1395,
+        "y": 460,
+        "wires": [
+            [
+                "d6a00be1229756c5"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "8ce15f311719ecbe",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 1635,
+        "y": 460,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "8938dc6dcda83693",
+        "type": "trigger",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "op1": "",
+        "op2": "",
+        "op1type": "nul",
+        "op2type": "pay",
+        "duration": "250",
+        "extend": false,
+        "overrideDelay": true,
+        "units": "ms",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1155,
+        "y": 600,
+        "wires": [
+            [
+                "8a59bacfa18fb196"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e41c2f3182fd5d96",
+        "type": "trigger",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "op1": "",
+        "op2": "false",
+        "op1type": "pay",
+        "op2type": "bool",
+        "duration": "-250",
+        "extend": false,
+        "overrideDelay": true,
+        "units": "ms",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1275,
+        "y": 560,
+        "wires": [
+            [
+                "acfe8f075546b825"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "7e94e891f0e380e7",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "delay",
+                "pt": "msg",
+                "to": "$.shellrecharge.poll.interval * 1000",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1095,
+        "y": 560,
+        "wires": [
+            [
+                "9e96665f791903d9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "71d10442ecd1111d",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "delay",
+                "pt": "msg",
+                "to": "$.shellrecharge.poll.duration * 1000",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1095,
+        "y": 600,
+        "wires": [
+            [
+                "8938dc6dcda83693"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8a59bacfa18fb196",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reset",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1215,
+        "y": 600,
+        "wires": [
+            [
+                "e41c2f3182fd5d96"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "0968da53daca3940",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "5c23b54eee1b071a"
+        ],
+        "linkType": "static",
+        "timeout": "",
+        "x": 275,
+        "y": 180,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5c23b54eee1b071a",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnRPOLL",
+        "links": [],
+        "x": 915,
+        "y": 560,
+        "wires": [
+            [
+                "05145542f7ad040e"
+            ]
+        ]
+    },
+    {
+        "id": "acfe8f075546b825",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "55c9fc1255901756"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1335,
+        "y": 560,
+        "wires": [
+            [
+                "22baca5f32c51de9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "22baca5f32c51de9",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 34",
+        "mode": "return",
+        "links": [],
+        "x": 1395,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "2b5d21f38a345d7e",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reset",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1095,
+        "y": 640,
+        "wires": [
+            [
+                "8938dc6dcda83693",
+                "b5e54355ea4c0281"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b5e54355ea4c0281",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1215,
+        "y": 640,
+        "wires": [
+            [
+                "e41c2f3182fd5d96",
+                "7fd56006ee7794fc"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "8d65f6f5b8e5e17b",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnPOLLRESET",
+        "links": [
+            "90d7db59b0791a6d"
+        ],
+        "x": 915,
+        "y": 640,
+        "wires": [
+            [
+                "2b5d21f38a345d7e",
+                "06e4cb80a57426b0"
+            ]
+        ]
+    },
+    {
+        "id": "9df932c893ca1c95",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 1035,
+        "y": 600,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "06e4cb80a57426b0",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Polling stopped",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Polling stopped",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 975,
+        "y": 600,
+        "wires": [
+            [
+                "9df932c893ca1c95"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "9e96665f791903d9",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1215,
+        "y": 560,
+        "wires": [
+            [
+                "e41c2f3182fd5d96"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "29575d965371513d",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ RPOLL [2023-04-08]",
+        "info": "",
+        "x": 1000,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "a42664f0cb63c1a9",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ POLLRESET [2023-04-08]",
+        "info": "",
+        "x": 1240,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "cebd0e2abeaaca53",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ POLL [2023-04-15]",
+        "info": "",
+        "x": 1000,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "35a0eefbcdbf2921",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ GETINFO [2023-04-07]",
+        "info": "",
+        "x": 150,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "a30ae37cb0bf1c9f",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ GETTOKEN [2023-04-08]",
+        "info": "",
+        "x": 150,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "184c0d2975d3128b",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ SETUP [2023-04-08]",
+        "info": "",
+        "x": 140,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "4657781f1d18860e",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ SANITISE [2023-04-07]",
+        "info": "",
+        "x": 650,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "d02319edb01163d1",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ CHARGERACTIONS [2023-04-08]",
+        "info": "",
+        "x": 1040,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "05145542f7ad040e",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.poll.interval",
+                "pt": "msg",
+                "to": "$exists($.shellrecharge.poll.interval) ? $.shellrecharge.poll.interval : 20",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.poll.duration",
+                "pt": "msg",
+                "to": "$exists($.shellrecharge.poll.duration) ? $.shellrecharge.poll.duration : 120",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1035,
+        "y": 560,
+        "wires": [
+            [
+                "71d10442ecd1111d",
+                "7e94e891f0e380e7"
+            ]
+        ],
+        "icon": "font-awesome/fa-cogs",
+        "l": false
+    },
+    {
+        "id": "8f33001f1139b12c",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "5c23b54eee1b071a"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1635,
+        "y": 780,
+        "wires": [
+            [
+                "89acfabc95322eb3"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "89acfabc95322eb3",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 36",
+        "mode": "return",
+        "links": [],
+        "x": 1695,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "5686248cd4895ddd",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "tid",
+        "property": "payload.tid",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 115,
+        "y": 800,
+        "wires": [
+            [
+                "f99557c7dafa568b"
+            ],
+            [
+                "8620e9840401b0cb"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "f99557c7dafa568b",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.tid",
+                "pt": "msg",
+                "to": "tID",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 175,
+        "y": 800,
+        "wires": [
+            [
+                "5a55fdc9be03e4bb"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8620e9840401b0cb",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.tid",
+                "pt": "msg",
+                "to": "shellrecharge.tid",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 175,
+        "y": 840,
+        "wires": [
+            [
+                "5a55fdc9be03e4bb"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5a55fdc9be03e4bb",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "cid",
+        "property": "payload.cid",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 235,
+        "y": 800,
+        "wires": [
+            [
+                "9ac24e025718666b"
+            ],
+            [
+                "b049ad17ce3f4eb9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "9ac24e025718666b",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.cid",
+                "pt": "msg",
+                "to": "cpID",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 295,
+        "y": 800,
+        "wires": [
+            [
+                "4575469aa170d7c6"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b049ad17ce3f4eb9",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.cid",
+                "pt": "msg",
+                "to": "shellrecharge.cid",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 295,
+        "y": 840,
+        "wires": [
+            [
+                "4575469aa170d7c6"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "9f65af62e6bde4d1",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Check cid",
+        "property": "shellrecharge.cid",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 475,
+        "y": 800,
+        "wires": [
+            [
+                "87957253f0917c40"
+            ],
+            [
+                "de2b4b53f17c2c9a"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "87957253f0917c40",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Check tid",
+        "property": "shellrecharge.tid",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 535,
+        "y": 800,
+        "wires": [
+            [
+                "a8b7de2cd35ee4bb"
+            ],
+            [
+                "9e33269c95349535"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a8b7de2cd35ee4bb",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Check id",
+        "property": "shellrecharge.auth.id",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 595,
+        "y": 800,
+        "wires": [
+            [
+                "26601e05f398eda7"
+            ],
+            [
+                "936acd4e5610dc7e"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "26601e05f398eda7",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Check pw",
+        "property": "shellrecharge.auth.pw",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 655,
+        "y": 800,
+        "wires": [
+            [
+                "6c196a55f08fe29a"
+            ],
+            [
+                "fd8c0b7ca4571f79"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "de2b4b53f17c2c9a",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 535,
+        "y": 840,
+        "wires": [
+            [
+                "9e33269c95349535"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "9e33269c95349535",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 595,
+        "y": 840,
+        "wires": [
+            [
+                "936acd4e5610dc7e"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "936acd4e5610dc7e",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 655,
+        "y": 840,
+        "wires": [
+            [
+                "fd8c0b7ca4571f79"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "fd8c0b7ca4571f79",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Error",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Setup error: check the documentation!",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 715,
+        "y": 840,
+        "wires": [
+            [
+                "2cdffcd224d9cf5c"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "2cdffcd224d9cf5c",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "NMSTATUS",
+        "mode": "link",
+        "links": [
+            "3b59d733acb39de1"
+        ],
+        "x": 775,
+        "y": 840,
+        "wires": [],
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "c79dc6481fb1b580",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Setup action/auth",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.action",
+                "pt": "msg",
+                "to": "shellrecharge.action",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.id",
+                "pt": "msg",
+                "to": "loginID",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.pw",
+                "pt": "msg",
+                "to": "loginPW",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.tries",
+                "pt": "msg",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 415,
+        "y": 800,
+        "wires": [
+            [
+                "9f65af62e6bde4d1"
+            ]
+        ],
+        "icon": "font-awesome/fa-cogs",
+        "l": false
+    },
+    {
+        "id": "4575469aa170d7c6",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "action",
+        "property": "payload.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 355,
+        "y": 800,
+        "wires": [
+            [
+                "c79dc6481fb1b580"
+            ],
+            [
+                "3a3d7c9d2a8be288"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "3a3d7c9d2a8be288",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 415,
+        "y": 840,
+        "wires": [
+            [
+                "de2b4b53f17c2c9a"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "9847257e9a1eea94",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Check poll interval",
+        "property": "payload.poll.interval",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 775,
+        "y": 800,
+        "wires": [
+            [
+                "509fba903646383a"
+            ],
+            [
+                "7344e4f3d230ef27"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "509fba903646383a",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.poll.interval",
+                "pt": "msg",
+                "to": "shellrecharge.poll.interval",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 835,
+        "y": 800,
+        "wires": [
+            [
+                "be7e4651303db5a2"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "7344e4f3d230ef27",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 835,
+        "y": 840,
+        "wires": [
+            [
+                "be7e4651303db5a2"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "be7e4651303db5a2",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Check poll duration",
+        "property": "payload.poll.duration",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 895,
+        "y": 800,
+        "wires": [
+            [
+                "e0dd713f64350c0a"
+            ],
+            [
+                "45dfe24261aca466"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e0dd713f64350c0a",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.poll.duration",
+                "pt": "msg",
+                "to": "shellrecharge.poll.duration",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 955,
+        "y": 800,
+        "wires": [
+            [
+                "36eb9529dd5a9561"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "45dfe24261aca466",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 955,
+        "y": 840,
+        "wires": [
+            [
+                "36eb9529dd5a9561"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "6c196a55f08fe29a",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 715,
+        "y": 800,
+        "wires": [
+            [
+                "9847257e9a1eea94"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "226cc809f69de354",
+        "type": "delay",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "2",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1395,
+        "y": 100,
+        "wires": [
+            [
+                "a9d322f92ba56071"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "6880012ce01a2233",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "OUTPUT2",
+        "links": [
+            "be7dd3d68d340d62",
+            "98e7fe6035d907ce"
+        ],
+        "x": 275,
+        "y": 420,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ]
+    },
+    {
+        "id": "be7dd3d68d340d62",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 37",
+        "mode": "link",
+        "links": [
+            "6880012ce01a2233"
+        ],
+        "x": 1635,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "3ff2d32b9d8fbf33",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Reset token",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "shellrecharge.auth.token",
+                "pt": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 615,
+        "y": 100,
+        "wires": [
+            [
+                "c76f014564bff961",
+                "23d643e34637f25c",
+                "5d451c3e56ede979"
+            ]
+        ],
+        "icon": "font-awesome/fa-tags",
+        "l": false
+    },
+    {
+        "id": "77a109b970bf9b24",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 735,
+        "y": 140,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c76f014564bff961",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Expired API token",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Expired API token",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 675,
+        "y": 140,
+        "wires": [
+            [
+                "77a109b970bf9b24"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "5e6c5ecf0b5d5947",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnEXPIRE",
+        "links": [],
+        "x": 555,
+        "y": 100,
+        "wires": [
+            [
+                "3ff2d32b9d8fbf33"
+            ]
+        ]
+    },
+    {
+        "id": "23d643e34637f25c",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 38",
+        "mode": "return",
+        "links": [],
+        "x": 735,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "caa17a21060a063a",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ EXPIRE [2023-04-08]",
+        "info": "",
+        "x": 640,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "8c39369bb0cf5313",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "5e6c5ecf0b5d5947"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 275,
+        "y": 300,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "df9344d6e1247962",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnFLUSH",
+        "links": [],
+        "x": 555,
+        "y": 280,
+        "wires": [
+            [
+                "7feea5e67ed99bbf"
+            ]
+        ]
+    },
+    {
+        "id": "e0624cfe04cfdf23",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ FLUSH [2023-04-08]",
+        "info": "",
+        "x": 640,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "7feea5e67ed99bbf",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Status message",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "shellrecharge",
+                "pt": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 615,
+        "y": 280,
+        "wires": [
+            [
+                "3d2da6e1da457ac8",
+                "9bfe65211a4b46ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-database",
+        "l": false
+    },
+    {
+        "id": "3d2da6e1da457ac8",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 39",
+        "mode": "return",
+        "links": [],
+        "x": 735,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "9f763835b6f460f2",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 735,
+        "y": 320,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "dfa754c45593905a",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "df9344d6e1247962"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 275,
+        "y": 340,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5d451c3e56ede979",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "token",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 675,
+        "y": 180,
+        "wires": [
+            [
+                "a275570246f6788f"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a275570246f6788f",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "NMSTATUS",
+        "mode": "link",
+        "links": [
+            "864485bf0efdf86b"
+        ],
+        "x": 735,
+        "y": 180,
+        "wires": [],
+        "icon": "font-awesome/fa-bug"
+    },
+    {
+        "id": "d67037747b51d614",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 235,
+        "y": 940,
+        "wires": [
+            [
+                "f2f9dbc5fefef1eb"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "60d1780775266c86",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Token valid?",
+        "property": "$millis() - $flowContext(\"shellrecharge.auth.ttime\") <= (1 * 3600000)",
+        "propertyType": "jsonata",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 175,
+        "y": 940,
+        "wires": [
+            [
+                "d67037747b51d614"
+            ],
+            [
+                "1b62b9914f9d8265"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "03b1642c334f9999",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Have token time?",
+        "property": "shellrecharge.auth.ttime",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 115,
+        "y": 940,
+        "wires": [
+            [
+                "60d1780775266c86"
+            ],
+            [
+                "2dc80eda9d41e2ad"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "2dc80eda9d41e2ad",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 175,
+        "y": 980,
+        "wires": [
+            [
+                "1b62b9914f9d8265"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "1b62b9914f9d8265",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "5e6c5ecf0b5d5947"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 235,
+        "y": 980,
+        "wires": [
+            [
+                "f2f9dbc5fefef1eb"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "93f25d4416560160",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 115,
+        "y": 520,
+        "wires": [
+            [
+                "82262cf778a84017"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "7fd56006ee7794fc",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 40",
+        "mode": "return",
+        "links": [],
+        "x": 1395,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "1f396999080ff50b",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "8d65f6f5b8e5e17b"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 275,
+        "y": 220,
+        "wires": [
+            [
+                "e835bec8486dc7d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "07c68ccf2cffac02",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "⮑ STATUS [2023-04-10]",
+        "info": "",
+        "x": 1010,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "4b5222e9d5a051b2",
+        "type": "http request",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1035,
+        "y": 280,
+        "wires": [
+            [
+                "747d4b33a036852a"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "29d5062f9c7c1ebb",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP status 200/2",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "200",
+                "vt": "num",
+                "v2": "202",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1155,
+        "y": 280,
+        "wires": [
+            [
+                "e22a599771c54713"
+            ],
+            [
+                "3f566293e20d6f7e"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c635bb874cf7c228",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnHTTP",
+        "links": [
+            "8c5515f6468a457b"
+        ],
+        "x": 915,
+        "y": 280,
+        "wires": [
+            [
+                "7a64b7d4d4d2a6f3"
+            ]
+        ]
+    },
+    {
+        "id": "d06715410a313b0b",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 535,
+        "y": 940,
+        "wires": [
+            [
+                "cdcccceda928c826"
+            ]
+        ],
+        "icon": "node-red/white-globe.svg",
+        "l": false
+    },
+    {
+        "id": "e22a599771c54713",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 41",
+        "mode": "return",
+        "links": [],
+        "x": 1215,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "980ff624fa680ee3",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Failed",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"HTTP Error [\" & $. statusCode & \":\" & $.shellrecharge.action & \"]\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1335,
+        "y": 320,
+        "wires": [
+            [
+                "5580afe6081e6478"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "9e380d380a1c23c2",
+        "type": "json",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "error",
+        "action": "",
+        "pretty": false,
+        "x": 1455,
+        "y": 320,
+        "wires": [
+            [
+                "8f3bc6ecaf3c763e"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5580afe6081e6478",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "func": "// Shell Recharge's error message JSON is farked\n// But the HTTP node sometimes reports a simple string\nif (msg.payload.includes(\"{\")) {\n    // it's JSON\n    msg.error = msg.payload.substring(msg.payload.indexOf('{'),msg.payload.lastIndexOf('}')+1);\n} else {\n    // it's plaintext\n    msg.error = '{\"message\":\"' + msg.payload + '\"}';\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1395,
+        "y": 320,
+        "wires": [
+            [
+                "9e380d380a1c23c2"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8f3bc6ecaf3c763e",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "NMSTATUS",
+        "mode": "link",
+        "links": [
+            "3b59d733acb39de1"
+        ],
+        "x": 1515,
+        "y": 320,
+        "wires": [],
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "747d4b33a036852a",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP status",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ETIMEOUT",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1095,
+        "y": 280,
+        "wires": [
+            [
+                "7afbbf0cdc5bb359"
+            ],
+            [
+                "29d5062f9c7c1ebb"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "7afbbf0cdc5bb359",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1155,
+        "y": 320,
+        "wires": [
+            [
+                "1981191da9ba00ec"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "034d0c78f69a8401",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ HTTP [2023-04-23]",
+        "info": "",
+        "x": 1000,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "1ceb4922ed5bc662",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.token",
+                "pt": "msg",
+                "to": "responseCookies.tnm_api.value",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.ttime",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth",
+                "pt": "flow",
+                "to": "shellrecharge.auth",
+                "tot": "msg"
+            },
+            {
+                "t": "move",
+                "p": "shellrecharge.payload",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1315,
+        "y": 940,
+        "wires": [
+            [
+                "06b4593c77a2fbfb"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "2b0e7bbe8e7fae60",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "responseCookies.tnm_api.value",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1245,
+        "y": 940,
+        "wires": [
+            [
+                "1ceb4922ed5bc662",
+                "badf6d989559defe",
+                "62cd50d23af356f8"
+            ],
+            [
+                "32d9f3db80418947"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "32d9f3db80418947",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Error",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Error! No token. 😞",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1315,
+        "y": 1060,
+        "wires": [
+            [
+                "6c1845b42e10cbbc"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "62cd50d23af356f8",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "OK",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Got token! 😁",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1315,
+        "y": 1020,
+        "wires": [
+            [
+                "0d49ef942b918fb9"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "0d49ef942b918fb9",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "NMSTATUS",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 1435,
+        "y": 1020,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "badf6d989559defe",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "token",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1315,
+        "y": 980,
+        "wires": [
+            [
+                "d2a78d42a1208c85"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "d2a78d42a1208c85",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "NMSTATUS",
+        "mode": "link",
+        "links": [
+            "864485bf0efdf86b"
+        ],
+        "x": 1435,
+        "y": 980,
+        "wires": [],
+        "icon": "font-awesome/fa-bug"
+    },
+    {
+        "id": "6c1845b42e10cbbc",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "NMSTATUS",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 1435,
+        "y": 1060,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "d065d487df368e65",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "fnGETTOKENRETURN",
+        "mode": "return",
+        "links": [],
+        "x": 1435,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "06b4593c77a2fbfb",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1375,
+        "y": 940,
+        "wires": [
+            [
+                "d065d487df368e65"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "bc31477b0e6470bc",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1195,
+        "y": 940,
+        "wires": [
+            [
+                "2b0e7bbe8e7fae60"
+            ]
+        ],
+        "icon": "node-red/white-globe.svg",
+        "l": false
+    },
+    {
+        "id": "3a05b1b731c149a6",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "NMSTATUS",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 535,
+        "y": 980,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "6ad6a1a725b013c3",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "start",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "stop",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "reset",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "poll",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "rpoll",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "nopoll",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "setup",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "expire",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "flush",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dump",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 10,
+        "x": 195,
+        "y": 160,
+        "wires": [
+            [
+                "749f67fe302c7e58"
+            ],
+            [
+                "749f67fe302c7e58"
+            ],
+            [
+                "749f67fe302c7e58"
+            ],
+            [
+                "4dc0b20b0942a461"
+            ],
+            [
+                "0968da53daca3940"
+            ],
+            [
+                "1f396999080ff50b"
+            ],
+            [
+                "484b17910ca1f7e3"
+            ],
+            [
+                "8c39369bb0cf5313"
+            ],
+            [
+                "dfa754c45593905a"
+            ],
+            [
+                "bcf57c3511981d21"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "014b7d76110aa1d1",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1335,
+        "y": 740,
+        "wires": [
+            [
+                "830c06ccccf43af6",
+                "1554e058956bfaf8"
+            ]
+        ],
+        "icon": "node-red/white-globe.svg",
+        "l": false
+    },
+    {
+        "id": "4b543da40262fe89",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1095,
+        "y": 420,
+        "wires": [
+            [
+                "62efb2d5d22f759f"
+            ]
+        ],
+        "icon": "node-red/white-globe.svg",
+        "l": false
+    },
+    {
+        "id": "85bfa969a8d6596c",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 415,
+        "y": 660,
+        "wires": [
+            [
+                "23654038c7078db7"
+            ]
+        ],
+        "icon": "node-red/white-globe.svg",
+        "l": false
+    },
+    {
+        "id": "e150e0d5b0adac66",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 415,
+        "y": 700,
+        "wires": [
+            [
+                "082fab3e72f6d4fb"
+            ]
+        ],
+        "icon": "node-red/white-globe.svg",
+        "l": false
+    },
+    {
+        "id": "51161685a7bf6a78",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 415,
+        "y": 620,
+        "wires": [
+            [
+                "9ad84417d596cdb8"
+            ]
+        ],
+        "icon": "node-red/white-globe.svg",
+        "l": false
+    },
+    {
+        "id": "a53fd84a1098ef6b",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "function 17",
+        "func": "if (msg.shellrecharge.chargePoints[msg.shellrecharge.cid].name === null) {\n    var cid = msg.shellrecharge.chargePoints[msg.shellrecharge.cid].evses[0].evseId\n} else {\n    var cid = msg.shellrecharge.chargePoints[msg.shellrecharge.cid].name\n};\nif (msg.shellrecharge.chargeTokens[msg.shellrecharge.tid].name === null) {\n    var tid = msg.shellrecharge.chargeTokens[msg.shellrecharge.tid].printedNumber\n} else {\n    var tid = msg.shellrecharge.chargeTokens[msg.shellrecharge.tid].name\n};\nmsg.payload = 'Charging at '\n    + cid\n    + \" using card \"\n    + tid;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1455,
+        "y": 780,
+        "wires": [
+            [
+                "e960b883368fd0b7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "1554e058956bfaf8",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "start",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1395,
+        "y": 780,
+        "wires": [
+            [
+                "a53fd84a1098ef6b"
+            ],
+            [
+                "9a9a44b7b3f64e69"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "62efb2d5d22f759f",
+        "type": "json",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 1155,
+        "y": 420,
+        "wires": [
+            [
+                "efaecdd679bf7aaa"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e835bec8486dc7d7",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "shellrecharge",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 420,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "33366ab4a4066737",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.text",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.fill",
+                "pt": "msg",
+                "to": "blue",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 675,
+        "y": 560,
+        "wires": [
+            [
+                "d4a2897e3e6f0606"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b3852200abde9d59",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "error.message",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 615,
+        "y": 520,
+        "wires": [
+            [
+                "88de56c5414432b3"
+            ],
+            [
+                "33366ab4a4066737"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "88de56c5414432b3",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "move",
+                "p": "error.message",
+                "pt": "msg",
+                "to": "payload.text",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.fill",
+                "pt": "msg",
+                "to": "blue",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 675,
+        "y": 520,
+        "wires": [
+            [
+                "d4a2897e3e6f0606"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "759edbe1bbcd1c0e",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnERRMSG",
+        "links": [],
+        "x": 555,
+        "y": 520,
+        "wires": [
+            [
+                "b3852200abde9d59"
+            ]
+        ]
+    },
+    {
+        "id": "d4a2897e3e6f0606",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 42",
+        "mode": "return",
+        "links": [],
+        "x": 735,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "d86b48d71f21968b",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ ERRMSG [2023-04-10]",
+        "info": "",
+        "x": 650,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "e45b2ec09e8b435a",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "759edbe1bbcd1c0e"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1035,
+        "y": 100,
+        "wires": [
+            [
+                "9ce27e794d27c50f",
+                "34b5b1db743d0bc1"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "735f0cad7099de29",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "759edbe1bbcd1c0e"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1215,
+        "y": 140,
+        "wires": [
+            [
+                "05fb8a20659dfdc9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "d79e3f9c5972ef3d",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1095,
+        "y": 180,
+        "wires": [
+            [
+                "74dcfd175dc12f8e"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "778839c4b150ffe5",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1575,
+        "y": 180,
+        "wires": [
+            [
+                "be7dd3d68d340d62"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "30e44e26b103a7a0",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Status message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Check the Debug output for setup details.",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1755,
+        "y": 280,
+        "wires": [
+            [
+                "14ebb707e073d58e"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "14ebb707e073d58e",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 1815,
+        "y": 280,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "706b199f39b054ba",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "setup",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1695,
+        "y": 280,
+        "wires": [
+            [
+                "30e44e26b103a7a0"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "0618dc9ade86eaa7",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnGETINFOMSG",
+        "links": [
+            "3b79b69f09f14292",
+            "e5bb4774757fa09a"
+        ],
+        "x": 1635,
+        "y": 280,
+        "wires": [
+            [
+                "706b199f39b054ba"
+            ]
+        ]
+    },
+    {
+        "id": "e5bb4774757fa09a",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "0618dc9ade86eaa7"
+        ],
+        "x": 235,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "3b79b69f09f14292",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "0618dc9ade86eaa7"
+        ],
+        "x": 775,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "f6de5030dc28472e",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ GETINFOMSG [2023-04-11]",
+        "info": "",
+        "x": 1740,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "d61595ee6f134c5d",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "'Charger ' & $lowercase($.payload)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1575,
+        "y": 460,
+        "wires": [
+            [
+                "8ce15f311719ecbe"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "eb5bef49f2705002",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "delay",
+                "pt": "msg",
+                "to": "$round($random() * 300000)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 235,
+        "y": 1080,
+        "wires": [
+            [
+                "3f00d2bd1c149343",
+                "3ce647b35fd552f3"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "3f00d2bd1c149343",
+        "type": "trigger",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "op1": "",
+        "op2": "",
+        "op1type": "nul",
+        "op2type": "payl",
+        "duration": "250",
+        "extend": false,
+        "overrideDelay": true,
+        "units": "ms",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 295,
+        "y": 1160,
+        "wires": [
+            [
+                "b250a1c77ab0a7e7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "646d8c17c15b4cb4",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "'Starting ' & $fromMillis($millis() + $.delay, '[H01]:[m01].[s01]',$.tz)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 1080,
+        "wires": [
+            [
+                "01d5c6d687287135"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "24dccca6cdba5306",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.delay",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 175,
+        "y": 1080,
+        "wires": [
+            [
+                "e5385c2097fdabf0"
+            ],
+            [
+                "eb5bef49f2705002"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e5385c2097fdabf0",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 235,
+        "y": 1120,
+        "wires": [
+            [
+                "5d1f7eb861e29f33"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "01d5c6d687287135",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "2708f3e352f31496"
+        ],
+        "x": 415,
+        "y": 1080,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "5d1f7eb861e29f33",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 43",
+        "mode": "return",
+        "links": [],
+        "x": 415,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "d8b0b8be93aaf428",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnDELAY",
+        "links": [],
+        "x": 55,
+        "y": 1080,
+        "wires": [
+            [
+                "73b9fb35a9e7882a"
+            ]
+        ]
+    },
+    {
+        "id": "b250a1c77ab0a7e7",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "delay",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 1160,
+        "wires": [
+            [
+                "5d1f7eb861e29f33"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "58a58a017f7ea414",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reset",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 175,
+        "y": 1160,
+        "wires": [
+            [
+                "3f00d2bd1c149343"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4f251c284aa80fed",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ DELAY [2023-04-14]",
+        "info": "",
+        "x": 140,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "3ce647b35fd552f3",
+        "type": "function",
+        "z": "9a423f990bb6db5c",
+        "name": "function 19",
+        "func": "function pad(number, length) {\n    var str = \"\" + number\n    while (str.length < length) {\n        str = '0' + str\n    }\n    return str\n}\nvar offset = new Date().getTimezoneOffset()\noffset = ((offset < 0 ? '+' : '-') + // Note the reversed sign!\n    pad(parseInt(Math.abs(offset / 60)), 2) +\n    pad(Math.abs(offset % 60), 2))\nmsg.tz = offset\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 295,
+        "y": 1080,
+        "wires": [
+            [
+                "646d8c17c15b4cb4"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "3f7fd0577da43137",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 44",
+        "mode": "return",
+        "links": [],
+        "x": 1135,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "36eb9529dd5a9561",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Check delay",
+        "property": "payload.delay",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1015,
+        "y": 800,
+        "wires": [
+            [
+                "a69d251189b8dc5d"
+            ],
+            [
+                "9524a1785f1e4806"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a69d251189b8dc5d",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.delay",
+                "pt": "msg",
+                "to": "shellrecharge.delay",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1075,
+        "y": 800,
+        "wires": [
+            [
+                "3f7fd0577da43137",
+                "c570e99a71a66238"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "9524a1785f1e4806",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.delay",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1075,
+        "y": 840,
+        "wires": [
+            [
+                "3f7fd0577da43137",
+                "c570e99a71a66238"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "246e27ceacdb7247",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "d8b0b8be93aaf428"
+        ],
+        "linkType": "static",
+        "timeout": "",
+        "x": 975,
+        "y": 740,
+        "wires": [
+            [
+                "581026e7f5fc6642"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "73b9fb35a9e7882a",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "start",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 115,
+        "y": 1080,
+        "wires": [
+            [
+                "24dccca6cdba5306"
+            ],
+            [
+                "58a58a017f7ea414",
+                "e73efb1e1e2fadd5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e73efb1e1e2fadd5",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 175,
+        "y": 1120,
+        "wires": [
+            [
+                "e5385c2097fdabf0"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "52291e93fe4e048b",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnPOLLRBERESET",
+        "links": [
+            "c570e99a71a66238"
+        ],
+        "x": 1455,
+        "y": 600,
+        "wires": [
+            [
+                "542507ade311b55e"
+            ]
+        ]
+    },
+    {
+        "id": "c570e99a71a66238",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 45",
+        "mode": "link",
+        "links": [
+            "52291e93fe4e048b"
+        ],
+        "x": 1135,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "7a4a3991335f8287",
+        "type": "rbe",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": false,
+        "property": "payload",
+        "topi": "topic",
+        "x": 1635,
+        "y": 560,
+        "wires": [
+            [
+                "f918f07ceaa34539"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "98a3d358ed082992",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reset",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1575,
+        "y": 600,
+        "wires": [
+            [
+                "7a4a3991335f8287"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "f918f07ceaa34539",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "reset",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1695,
+        "y": 560,
+        "wires": [
+            [
+                "395674d1aa4e4cda"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "542507ade311b55e",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "property": "shellrecharge.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "poll",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "rpoll",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1515,
+        "y": 600,
+        "wires": [
+            [
+                "98a3d358ed082992"
+            ],
+            [
+                "98a3d358ed082992"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8120b483cc8714a3",
+        "type": "link in",
+        "z": "9a423f990bb6db5c",
+        "name": "fnPOLLRBE",
+        "links": [],
+        "x": 1455,
+        "y": 560,
+        "wires": [
+            [
+                "7a4a3991335f8287"
+            ]
+        ]
+    },
+    {
+        "id": "395674d1aa4e4cda",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 46",
+        "mode": "return",
+        "links": [],
+        "x": 1755,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "ace6a9e257acc635",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "8120b483cc8714a3"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1515,
+        "y": 460,
+        "wires": [
+            [
+                "d61595ee6f134c5d"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "d7ffbda23ee45f43",
+        "type": "comment",
+        "z": "9a423f990bb6db5c",
+        "name": "ƒ POLLRBE [2023-04-15]",
+        "info": "",
+        "x": 1550,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "88e51864d29ffdf4",
+        "type": "catch",
+        "z": "9a423f990bb6db5c",
+        "d": true,
+        "name": "",
+        "scope": null,
+        "uncaught": true,
+        "x": 55,
+        "y": 420,
+        "wires": [
+            [
+                "98e7fe6035d907ce"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "efc428de87aded6c",
+        "type": "catch",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "scope": [
+            "ace6a9e257acc635"
+        ],
+        "uncaught": false,
+        "x": 1695,
+        "y": 600,
+        "wires": [
+            [
+                "c4058f245f393d14"
+            ]
+        ],
+        "l": false,
+        "info": "Suppresses timeout error"
+    },
+    {
+        "id": "c4058f245f393d14",
+        "type": "debug",
+        "z": "9a423f990bb6db5c",
+        "d": true,
+        "name": "debug 55",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1755,
+        "y": 600,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "98e7fe6035d907ce",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 47",
+        "mode": "link",
+        "links": [
+            "6880012ce01a2233"
+        ],
+        "x": 115,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "82262cf778a84017",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "shellrecharge",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 355,
+        "y": 520,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "3f566293e20d6f7e",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "HTTP status 401",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "400",
+                "vt": "num",
+                "v2": "401",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1215,
+        "y": 280,
+        "wires": [
+            [
+                "c64a6676d7594245"
+            ],
+            [
+                "1981191da9ba00ec"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c64a6676d7594245",
+        "type": "switch",
+        "z": "9a423f990bb6db5c",
+        "name": "Loops?",
+        "property": "shellrecharge.auth.tries",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1275,
+        "y": 280,
+        "wires": [
+            [
+                "def8cf3da4ea9ef7"
+            ],
+            [
+                "980ff624fa680ee3"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "1981191da9ba00ec",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1275,
+        "y": 320,
+        "wires": [
+            [
+                "980ff624fa680ee3"
+            ]
+        ],
+        "icon": "font-awesome/fa-arrows-h",
+        "l": false
+    },
+    {
+        "id": "def8cf3da4ea9ef7",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "5e6c5ecf0b5d5947"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1335,
+        "y": 280,
+        "wires": [
+            [
+                "b3837f0e8d3f1cce"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b3837f0e8d3f1cce",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "c4b61295dcb891bf"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1395,
+        "y": 280,
+        "wires": [
+            [
+                "57ea53abf82e762f"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8c5515f6468a457b",
+        "type": "link out",
+        "z": "9a423f990bb6db5c",
+        "name": "link out 48",
+        "mode": "link",
+        "links": [
+            "c635bb874cf7c228"
+        ],
+        "x": 1575,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "7a64b7d4d4d2a6f3",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "Cache",
+        "rules": [
+            {
+                "t": "set",
+                "p": "shellrecharge.cache.http.method",
+                "pt": "msg",
+                "to": "method",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.cache.http.url",
+                "pt": "msg",
+                "to": "url",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.cache.http.cookies",
+                "pt": "msg",
+                "to": "cookies",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.cache.http.headers",
+                "pt": "msg",
+                "to": "headers",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.cache.http.requestTimeout",
+                "pt": "msg",
+                "to": "requestTimeout",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 975,
+        "y": 280,
+        "wires": [
+            [
+                "4b5222e9d5a051b2"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "9566b8ae666082b2",
+        "type": "change",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "shellrecharge.cache.http.method",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "shellrecharge.cache.http.url",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "cookies",
+                "pt": "msg",
+                "to": "shellrecharge.cache.http.cookies",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "shellrecharge.cache.http.headers",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "requestTimeout",
+                "pt": "msg",
+                "to": "shellrecharge.cache.http.requestTimeout",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "cookies.tnm_api",
+                "pt": "msg",
+                "to": "shellrecharge.auth.token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "shellrecharge.auth.tries",
+                "pt": "msg",
+                "to": "1",
+                "tot": "num"
+            },
+            {
+                "t": "delete",
+                "p": "shellrecharge.cache.http",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1515,
+        "y": 280,
+        "wires": [
+            [
+                "8c5515f6468a457b"
+            ]
+        ],
+        "icon": "node-red/parser-html.svg",
+        "l": false
+    },
+    {
+        "id": "57ea53abf82e762f",
+        "type": "link call",
+        "z": "9a423f990bb6db5c",
+        "name": "",
+        "links": [
+            "b18c194aedf3697f"
+        ],
+        "linkType": "static",
+        "timeout": "30",
+        "x": 1455,
+        "y": 280,
+        "wires": [
+            [
+                "9566b8ae666082b2"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "a641b41ac755d2dc",
+        "type": "debug",
+        "z": "b6a945712effc636",
+        "name": "Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2075,
+        "y": 320,
+        "wires": [],
+        "icon": "font-awesome/fa-bug",
+        "l": false
+    },
+    {
+        "id": "92ebd623b8b4d958",
+        "type": "debug",
+        "z": "b6a945712effc636",
+        "name": "Status",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "$boolean(msg.payload) = true ? \"Charging \" & $now('[H#1]:[m01]','+0100') : \"Idle \" & $now('[H#1]:[m01]','+0100')",
+        "statusType": "jsonata",
+        "x": 2075,
+        "y": 260,
+        "wires": [],
+        "icon": "font-awesome/fa-battery-three-quarters",
+        "l": false
+    },
+    {
+        "id": "3e255561e9412b72",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Poll once",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"poll\"}",
+        "payloadType": "json",
+        "x": 1715,
+        "y": 360,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-bullhorn",
+        "l": false
+    },
+    {
+        "id": "a2f21339bb09d2d2",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Stop polling",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"nopoll\"}",
+        "payloadType": "json",
+        "x": 1715,
+        "y": 400,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-stop-circle-o",
+        "l": false
+    },
+    {
+        "id": "3ea3ecaa41943a13",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Flush cache",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"flush\"}",
+        "payloadType": "json",
+        "x": 1715,
+        "y": 440,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-bathtub",
+        "l": false
+    },
+    {
+        "id": "9d8029c11bf79db0",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Setup",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"setup\"}",
+        "payloadType": "json",
+        "x": 1785,
+        "y": 200,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-info-circle",
+        "l": false
+    },
+    {
+        "id": "59430a708521137b",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Start",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"start\",\"delay\":false,\"_comment\":\"delay_optional\"}",
+        "payloadType": "json",
+        "x": 1750,
+        "y": 240,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-battery-4"
+    },
+    {
+        "id": "87af5d1088e4d4f7",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Stop",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"stop\"}",
+        "payloadType": "json",
+        "x": 1750,
+        "y": 280,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-battery-4"
+    },
+    {
+        "id": "2dc743b799b6cc40",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Poll repeatedly",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"rpoll\",\"poll\":{\"interval\":5,\"duration\":10,\"_comment\":\"seconds, optional\"}}",
+        "payloadType": "json",
+        "x": 1785,
+        "y": 360,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-recycle",
+        "l": false
+    },
+    {
+        "id": "a57f763361f0840f",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Expire token",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"expire\"}",
+        "payloadType": "json",
+        "x": 1785,
+        "y": 400,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-trash-o",
+        "l": false
+    },
+    {
+        "id": "d4c8daf3c24b3de7",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Reset",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"reset\"}",
+        "payloadType": "json",
+        "x": 1750,
+        "y": 320,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-battery-4"
+    },
+    {
+        "id": "342c386542011bd2",
+        "type": "inject",
+        "z": "b6a945712effc636",
+        "name": "Dump",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"action\":\"dump\"}",
+        "payloadType": "json",
+        "x": 1785,
+        "y": 440,
+        "wires": [
+            [
+                "98287d627493c85a"
+            ]
+        ],
+        "icon": "font-awesome/fa-bug",
+        "l": false
+    },
+    {
+        "id": "98287d627493c85a",
+        "type": "subflow:9a423f990bb6db5c",
+        "z": "b6a945712effc636",
+        "name": "",
+        "x": 1940,
+        "y": 280,
+        "wires": [
+            [
+                "92ebd623b8b4d958"
+            ],
+            [
+                "a641b41ac755d2dc"
+            ]
+        ]
+    }
+]
