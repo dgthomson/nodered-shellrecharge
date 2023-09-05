@@ -2,10 +2,10 @@
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
-[!RECENT ISSUE]
+> [!RECENT ISSUE]
 
-Vehicle details can only be managed in the app now rather than on the Shell Recharge website which seems to cause the flow to fail.
-Version 2.21β temporarily fixes this until the problem can be explored in more detail.
+> Vehicle details can only be managed in the app now rather than on the Shell Recharge website which seems to cause the flow to fail.
+> Version 2.21β temporarily fixes this until the problem can be explored in more detail.
 
 The latest version is **sr-2-20.json** which needs **Node-RED version 3.02 or later**.
 
