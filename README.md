@@ -3,6 +3,7 @@
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
 [!RECENT ISSUE]
+
 Vehicle details can only be managed in the app now rather than on the Shell Recharge website which seems to cause the flow to fail.
 Version 2.21β temporarily fixes this until the problem can be explored in more detail.
 
