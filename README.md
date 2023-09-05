@@ -1,3 +1,6 @@
+> [!NOTE]
+> This is a note
+
 ## About this subflow
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
