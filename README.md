@@ -1,11 +1,8 @@
-> [!WARNING]
-> Vehicle details can only be managed in the app now rather than on the Shell Recharge website which seems to cause the flow to fail. Version 2.21β temporarily fixes this until the problem can be explored in more detail.
-
 ## About this subflow
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
-The latest version is **sr-2-21β.json** which needs **Node-RED version 3.02 or later**.
+The latest version is **sr-2-3.json** which needs **Node-RED version 3.02 or later**.
 
 ## Getting started
 
@@ -68,6 +65,14 @@ The polling interval (in seconds) can be set in (number) _msg.rpoll.interval_ an
 This would poll every 5 seconds for 20 seconds.
 
 Stop polling with _nopoll_.
+
+**energy**
+
+Get energy consumption information.
+
+The start time is set in (number) _msg.range.start_ and the end time is set in (number) _msg.range.end_, both in Unix timestamp format, for example:
+
+> msg.payload = { "action": "energy", "range": {"start": 1692054000000, "end": 1694645999999 } }
 
 **expire**
 
