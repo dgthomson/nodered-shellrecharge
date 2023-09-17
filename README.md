@@ -2,7 +2,7 @@
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
-The latest version is **sr-2-3.json** which needs **Node-RED version 3.02 or later**.
+The latest version is **sr-2-30.json** which needs **Node-RED version 3.02 or later**.
 
 ## Getting started
 
