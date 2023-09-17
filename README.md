@@ -88,7 +88,7 @@ Show the internal cache.
 
 ## Outputs
 
-The **_Output_** payload is _(boolean) true_ if a charge is in progress, otherwise it is _(boolean) false_. This is also updated when polling is in progress. All other output is from **_Debug_** labelled with topics like _status_, _poll_, _response_ and _error_.
+The **_Output_** payload is _(boolean) true_ if a charge is in progress, otherwise it is _(boolean) false_. This is also updated when polling is in progress. All other output is from **_Debug_** labelled with topics like _status_, _poll_, _response_, _energy_ and _error_.
 
 ## Problems
 
