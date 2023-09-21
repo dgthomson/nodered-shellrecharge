@@ -1,3 +1,8 @@
+> __Warning__ 
+>
+> [21-09-2023] Shell Recharge and the Shell Go+ loyalty program now share the same login details. You may need to change your password inside the flow.
+
+
 ## About this subflow
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
