@@ -71,6 +71,8 @@ This would poll every 5 seconds for 20 seconds.
 
 Stop polling with _nopoll_.
 
+After _start_, _stop_ and _reset_, polling will automatically run every 20 seconds for 120 seconds.
+
 **energy**
 
 Get energy consumption information.
