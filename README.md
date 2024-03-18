@@ -17,7 +17,7 @@ Drag the Shell Recharge node into a flow.
 
 Double-click on the new node.
 
-Using the credentials used to login to the Shell Recharge website, enter the username and password into the respective fields.
+Using the credentials used to login to the Shell Recharge website, enter the username and password into the respective fields of into the `Edit subflow instance: <xxx>` box which appears.
 
 To find suitable values for _Charger ID_ and _Card ID_, send a payload (using an inject node, for example) to **_Input_** containing:
 
@@ -104,6 +104,10 @@ The **_Output_** payload is _(boolean) true_ if a charge is in progress, otherwi
 _HTTP Error [401:x]_
 
 This means 'Unauthorised'. Check your username and password, or try _expire_.
+
+_"TypeError: Cannot read properties of undefined (reading '[evses|uuid]')"_
+
+Do not enter the value of `uuid` or `rfid` given the `{"action":"setup"}` process into the `Edit subflow instance: <xxx>` section. `Charger ID` and `Card ID` should be a number, usually `0`.
 
 Otherwise, get in touch.
 
