@@ -25,7 +25,7 @@ To find suitable values for _Charger ID_ and _Card ID_, send a payload (using an
 
 <img width="438" alt="Data" src="https://user-images.githubusercontent.com/2021563/221404599-3fc7cf22-d4d2-4f6d-a7b0-1c2da7774fa2.png">
 
-Inspect the output (by connecting a debug node to the **_Debug_** output). Choose a suitable charger and RFID token card/keyfob- these match the details shown on the Shell Recharge website. The array index for _msg.payload.chargePoints_ and _msg.payload.chargeTokens_ (highlighted in red in the image above) should be entered in the configuration fields _Charger ID_ and _Card ID_ respectively. _This will be a number, usually `0`._
+Inspect the output (by connecting a debug node to the **_Debug_** output). Find your charger and RFID token card/keyfob details in this- these match the information shown on the Shell Recharge website. The array index for _msg.payload.chargePoints_ and _msg.payload.chargeTokens_ (highlighted by the red circles in the image above) should be entered in the configuration fields _Charger ID_ and _Card ID_ respectively. _These will be a number, usually `0`._
 
 > __Warning__ 
 >
