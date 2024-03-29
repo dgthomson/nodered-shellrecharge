@@ -17,7 +17,7 @@ Drag the Shell Recharge node into a flow.
 
 Double-click on the new node.
 
-Using the credentials used to login to the Shell Recharge website, enter the username and password into the respective fields of into the `Edit subflow instance: <xxx>` box which appears.
+Using the credentials used to login to the Shell Recharge website, enter the username and password into the respective fields of the `Edit subflow instance: <xxx>` box which appears.
 
 To find suitable values for _Charger ID_ and _Card ID_, send a payload (using an inject node, for example) to **_Input_** containing:
 
