@@ -105,6 +105,10 @@ _HTTP Error [401:x]_
 
 This means 'Unauthorised'. Check your username and password, or try _expire_.
 
+_HTTP Error [409:x]_
+
+``"The HTTP 409 Conflict response status code indicates a request conflict with the current state of the target resource."`` In the context of Shell Recharge, this probably means you're trying to start a charge while the system is in the process of stopping a session, or maybe resetting. Wait, then try again.
+
 _"TypeError: Cannot read properties of undefined (reading '[evses|uuid]')"_
 
 Do not enter the value of `uuid` or `rfid` given the `{"action":"setup"}` process into the `Edit subflow instance: <xxx>` section. `Charger ID` and `Card ID` should be a number, usually `0`.
