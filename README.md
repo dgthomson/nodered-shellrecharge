@@ -1,7 +1,8 @@
 > __Warning__ 
 >
 > [21-09-2023] Shell Recharge and the Shell Go+ loyalty program now share the same login details. You may need to change your password inside the flow.
-
+>
+> [02-05-2024] If you get ``HTTP Error [403:x]``, try replacing the subflow with version 2.5.
 
 ## About this subflow
 
