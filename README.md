@@ -8,7 +8,7 @@
 
 This subflow will control Shell Recharge or Newmotion car charging equipment.
 
-The latest version is **sr-2-50.json** (not sr-2-50β.json!) which needs **Node-RED version 3.02 or later**.
+The latest version is **sr-2-50.json** which needs **Node-RED version 3.02 or later**.
 
 <a href="https://www.buymeacoffee.com/77gg4cxtp8r" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
