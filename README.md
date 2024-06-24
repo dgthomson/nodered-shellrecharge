@@ -1,6 +1,6 @@
 > __Warning__
 > 
-> [23-06-2024] **This doesn't work in Node-RED 4.0.0.**
+> [23-06-2024] **There's a bug in Node-RED 4.0.0 which stops nodered-shellrecharge working.** It will be addressed in a maintenance release of Node-RED shortly but a fixed version of nodered-shellrecharge is available as **sr-2-50-NR4FIX.json**.
 >
 > [02-05-2024] If you get ``HTTP Error [403:x]``, try replacing the subflow with version 2.5.
 >
