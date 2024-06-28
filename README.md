@@ -1,11 +1,10 @@
 > __Warning__
 > 
-> [23-06-2024] **There's a bug in Node-RED 4.0.0 which stops nodered-shellrecharge working.** It will be addressed in a maintenance release of Node-RED shortly but a fixed version of nodered-shellrecharge is available as **sr-2-50-NR4FIX.json**.
+> [23-06-2024] **There are problems with Node-RED 4.0.0 and this subflow.** Please see <a href="https://github.com/dgthomson/nodered-shellrecharge/issues/27">this</a> thread for more information and how to get around them for now.
 >
 > [02-05-2024] If you get ``HTTP Error [403:x]``, try replacing the subflow with version 2.5.
 >
 > [21-09-2023] Shell Recharge and the Shell Go+ loyalty program now share the same login details. You may need to change your password inside the flow.
-
 
 ## About this subflow
 
