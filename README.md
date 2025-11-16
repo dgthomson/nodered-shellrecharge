@@ -1,5 +1,7 @@
 > __Warning__
 > 
+> [16-11-2025] **Shell Recharge equipment is now managed by 50five.** I recommend <a href="https://github.com/Platzii/homeassistant-evcnet">EVC-net (Last Mile Solutions) Charging Station Integration for Home Assistant</a>. This subflow no longer works.
+> 
 > [23-06-2024] **There are problems with Node-RED 4.0.0 and this subflow.** Please see <a href="https://github.com/dgthomson/nodered-shellrecharge/issues/27">this</a> thread for more information and how to get around them for now.
 >
 > [02-05-2024] If you get ``HTTP Error [403:x]``, try replacing the subflow with version 2.5.
